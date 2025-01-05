@@ -1,22 +1,19 @@
-import util from 'util';
-import child_process from 'child_process';
-import fs from 'fs/promises';
-import uuid4 from 'uuid4';
+import {createprojectService,
+     getprojectDirectoryService} from '../service/projectService.js';
 
-const execPromisifiied = util.promisify(child_process.exec);
 
 export const createproject = async (req, res) => {
-    
-    const projectId = uuid4();
-    await fs.mkdir(`./projects/${projectId}`);
-
-
-    const response = await execPromisifiied('npm create vite@latest  newproject -- --template react', {
-        cwd : `./projects/${projectId}`
-    })
-
-
-
+    const projectId  = await createprojectService();
     return res.json({message : 'React Project is created', data : projectId})
-
 }
+
+export const getprojecttree = async (req, res) => {
+
+    const tree = await getprojectDirectoryService(req.params.projectId);
+    return res.status(200).json({
+        data : tree,
+        success : true,
+        message : "Succesfully get the path"
+    })
+}
+

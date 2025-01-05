@@ -1,15 +1,20 @@
 
+
+
+import { useNavigate } from "react-router-dom";
 import { useCreateProject } from "../hooks/apis/mutations/useCreateProject";
 import "./CreateProject.css"; 
 
 export const Createproject = () => {
   const { createProjectMutuation, isPending, isSuccess } = useCreateProject();
 
+    const navigate = useNavigate();
   async function handleCreateProject() {
     console.log("triggerapi");
     try {
-      await createProjectMutuation();
+     const response = await createProjectMutuation();
       console.log("move to editor");
+      navigate(`/project/${response.data}`);
     } catch (error) {
       console.log(error);
     }
