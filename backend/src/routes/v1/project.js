@@ -5,6 +5,6 @@ import { createproject,
 const router = express.Router();
 
 router.post('/', createproject);
-router.get('/:projectId', getprojecttree);
+router.get('/:projectId/tree', getprojecttree);
 
 export default router;
