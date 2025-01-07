@@ -1,0 +1,89 @@
+.tree-node {
+    margin-left: 0px;
+    font-family: "Arial", sans-serif;
+    color: #333;
+    line-height: 1.6;
+    transition: all 0.3s ease;
+  }
+  
+  .tree-node-folder,
+  .tree-node-file {
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .tree-node-folder:hover,
+  .tree-node-file:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .tree-node-folder:hover .folder-icon {
+    color: #0078d4;
+  }
+  
+  .tree-node-icon {
+    margin-right: 10px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .folder-icon {
+    margin-right: 8px;
+    color: #ffa500;
+    transition: color 0.3s ease;
+  }
+  
+  .file-name {
+    margin-left: 8px;
+    color: #555;
+  }
+  
+  .tree-node-file .file-name {
+    transition: color 0.3s ease;
+  }
+  
+  .tree-node-file:hover .file-name {
+    color: #0078d4;
+  }
+  
+  .tree-node-folder .folder-icon {
+    font-size: 1.2em;
+  }
+  
+  .tree-node-file .file-name {
+    font-size: 1em;
+  }
+  
+  .tree-node-folder {
+    font-weight: bold;
+  }
+  
+  .tree-node-folder > span:last-child {
+    margin-left: 4px;
+    font-size: 1rem;
+  }
+  
+  .tree-node-file {
+    font-size: 0.9rem;
+    font-weight: normal;
+    padding-left: 1.5rem;
+  }
+  
+  .tree-node-file .file-name,
+  .tree-node-folder > span:last-child {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  
+  .tree-node-folder:hover span:last-child,
+  .tree-node-file:hover span {
+    color: #1a73e8;
+  }
+  
