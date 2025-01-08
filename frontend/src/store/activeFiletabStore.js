@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export const UseActiveFileTabStore = create((set) =>{
+export const useActiveFileTabStore = create((set) =>{
       return {
         activeFileTab: null,
         setactiveFiletab : (path, value, extension) => {

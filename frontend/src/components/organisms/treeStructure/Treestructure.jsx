@@ -9,7 +9,7 @@ export const Treestructure = () => {
 
   useEffect(() => {
     if (treeStructure) {
-      console.log("Tree Structure:", treeStructure);
+      console.log("")
     } else {
       settreeStructure(projectId); // Fetch tree structure based on project ID
     }

@@ -2,9 +2,23 @@ import { useParams } from "react-router-dom";
 import { EditorComponent } from "../components/molecules/Editor";
 import { EditorButton } from "../components/atoms/EditorTabsButton/EditorButton";
 import { Treestructure } from "../components/organisms/treeStructure/treestructure";
+import { useEditorSocketStore } from "../store/EditorSocket";
+import { useEffect } from "react";
+
+import {io} from "socket.io-client";
 
 export const ProjectPlayground = () => {
   const { projectId } = useParams();
+  const { seteditorSocket } = useEditorSocketStore();
+
+  useEffect(() => {
+    const editorsocketconn = io(`${import.meta.env.VITE_BACKEND_URL}/editor`, {
+      query: {
+        projectId: projectId,
+      },
+    });
+    seteditorSocket(editorsocketconn);
+  }, [projectId, seteditorSocket]);
 
   return (
     <div style={styles.container}>
@@ -18,11 +32,15 @@ export const ProjectPlayground = () => {
       </div>
 
       {/* Main Editor Section */}
-      <div style={styles.editor}>
-        <EditorComponent />
+      <div style={styles.editorContainer}>
+        {/* Buttons like VS Code Tabs */}
         <div style={styles.buttons}>
-          <EditorButton isActive={true} />
-          <EditorButton isActive={false} />
+          <EditorButton />
+        </div>
+
+        {/* Main Editor */}
+        <div style={styles.editor}>
+          <EditorComponent />
         </div>
       </div>
     </div>
@@ -45,22 +63,24 @@ const styles = {
     padding: "10px",
     boxSizing: "border-box",
   },
-  projectId: {
-    color: "#d4d4d4",
-    fontSize: "14px",
-    marginBottom: "10px",
-  },
-  editor: {
+  editorContainer: {
     flex: 1, // Take up remaining space
-    backgroundColor: "#1e1e1e",
-    padding: "10px",
-    color: "#d4d4d4",
     display: "flex",
-    flexDirection: "column",
+    flexDirection: "column", // Stack buttons above editor
+    backgroundColor: "#1e1e1e",
   },
   buttons: {
-    marginTop: "10px",
     display: "flex",
     gap: "10px",
+    backgroundColor: "#333333", // Darker background for the button bar
+    padding: "2px 10px",
+    alignItems: "center",
+    borderBottom: "1px solid #444", // Separator line like VS Code
+  },
+  editor: {
+    flex: 1, // Take up the remaining space
+    padding: "0px",
+    color: "#d4d4d4",
+    overflowY: "auto",
   },
 };

@@ -3,10 +3,14 @@ import { IoIosArrowDown, IoIosArrowForward } from "react-icons/io";
 import { FaFolderOpen } from "react-icons/fa";
 import { Fileicon } from "../atoms/EditorTabsButton/FileIcon/Fileicon";
 import "./TreeNode.css"; 
+import { useEditorSocketStore } from "../../store/EditorSocket";
 
 export const TreeNode = ({ filefolderData }) => {
+
   const [visibility, setVisibility] = useState({});
 
+  const { editorsocket} = useEditorSocketStore();
+ 
   const toggleVisibility = (name) => {
     setVisibility((prev) => ({
       ...prev,
@@ -18,6 +22,13 @@ export const TreeNode = ({ filefolderData }) => {
     const name = filefolderData.name.split(".");
     return name[name.length - 1];
   };
+
+  function handledoubleclick(filefolderData){
+     console.log("double clicked", filefolderData);
+     editorsocket.emit("readFile", {
+      pathToFileorFlder : filefolderData.path
+     })
+  }
 
   return (
     filefolderData && (
@@ -38,9 +49,13 @@ export const TreeNode = ({ filefolderData }) => {
             <span>{filefolderData.name}</span>
           </button>
         ) : (
-          <div className="tree-node-file">
+          <div className="tree-node-file"
+            onDoubleClick={() => handledoubleclick(filefolderData)}>
             <Fileicon extension={computeExtension(filefolderData)} />
-            <span className="file-name">{filefolderData.name}</span>
+            <span 
+            
+            className="file-name">{filefolderData.name}
+            </span>
           </div>
         )}
         {visibility[filefolderData.name] &&

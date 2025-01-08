@@ -1,21 +1,23 @@
+import { useActiveFileTabStore } from '../../../store/activeFiletabStore';
 import './EditorButton.css'
-export const EditorButton = ({isActive}) =>{
+export const EditorButton = () =>{
 
-
-    function handleclick(){
-  // todo
-    }
-    return (
+     const {activeFileTab } = useActiveFileTabStore();
+        
+        const filePath =  activeFileTab?.path;
+        const match = filePath?.match(/[^\\]+$/);
+        const fileName = match ? match[0] : 'untilted';
+       
+     return (
         <button 
-        onClick={handleclick}
         className="editor-button"
         style={{
-            color : isActive ? 'white' : '#959eba',
-            backgroundColor : isActive ? 'black' : '#4a4859',
-            borderTop: isActive ? '3px solid green' : '',
+            color :  'white',
+            backgroundColor :  'black',
+            borderTop: '3px solid #00FF00' 
         }}
         >
-            files.js
+            {fileName }
         </button>
     )
 

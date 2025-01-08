@@ -6,7 +6,6 @@ import { SiJson } from "react-icons/si";
 import { TbSvg } from "react-icons/tb";
 
 export const  Fileicon = ({ extension}) => {
-     console.log("extension", extension);
      const Iconmapper = {
         "js" :  <FaJs color="yellow" style={{height: '20px' , width: '20px'}}/>,
         "jsx" : <GrReactjs color="#61dbfa" style={{height: '20px' , width: '20px'}}/>,
