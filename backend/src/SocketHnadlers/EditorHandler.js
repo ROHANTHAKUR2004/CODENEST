@@ -1,13 +1,14 @@
 import fs from "fs/promises"
 
-export const handleEditorSocketEvents = (socket) => {  
+export const handleEditorSocketEvents = (socket, editorNamespace) => {  
     
   // write file
   socket.on("writeFile", async ({data, pathToFileorFlder}) => {
     try {
-        const res =  await fs.writeFile(pathToFileorFlder, data);
-        socket.emit('writeFileSuccess', {
-            data : "File write succesfully"
+        const res =  await fs.writeFile(pathToFileorFlder , data);
+        editorNamespace.emit("writeFileSuccess", {
+            data : "File write succesfully",
+            path : pathToFileorFlder,
         });
     } catch (error) {
         console.log("error wrting the file ", error);
@@ -47,7 +48,6 @@ export const handleEditorSocketEvents = (socket) => {
     socket.on("readFile", async ({pathToFileorFlder}) => {
           try {
              const res =  await fs.readFile(pathToFileorFlder);
-             console.log(res.toString());
              socket.emit("readFileSuccess", {
                 value : res.toString(),
                 path : pathToFileorFlder

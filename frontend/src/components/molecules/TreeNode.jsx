@@ -24,7 +24,6 @@ export const TreeNode = ({ filefolderData }) => {
   };
 
   function handledoubleclick(filefolderData){
-     console.log("double clicked", filefolderData);
      editorsocket.emit("readFile", {
       pathToFileorFlder : filefolderData.path
      })

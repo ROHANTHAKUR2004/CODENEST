@@ -24,7 +24,7 @@ app.use(cors());
 app.use('/api', apirouter);
  
 const editorNamespace = io.of('/editor');
-editorNamespace.on('connection', (socket) => {
+editorNamespace.on("connection", (socket) => {
        console.log("Editor Connected");
         
         let projectId = socket.handshake.query['projectId'];
@@ -40,7 +40,7 @@ editorNamespace.on('connection', (socket) => {
                     ignoreInitial : true
                 });
 
-                watcher.on('all', (event , path) => {
+                watcher.on("all", (event , path) => {
                       console.log(" chokidar watcher", path , event);
                 });
            }
