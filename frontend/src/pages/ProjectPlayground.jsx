@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
 import { EditorComponent } from "../components/molecules/Editor";
 import { EditorButton } from "../components/atoms/EditorTabsButton/EditorButton";
-import { Treestructure } from "../components/organisms/treeStructure/treestructure";
 import { useEditorSocketStore } from "../store/EditorSocket";
 import { useEffect } from "react";
 
 import {io} from "socket.io-client";
+import { Treestructure } from "../components/organisms/treeStructure/Treestructure";
 
 export const ProjectPlayground = () => {
   const { projectId } = useParams();

@@ -63,15 +63,15 @@ export const handleEditorSocketEvents = (socket, editorNamespace) => {
 
     // Deletefile 
 
-    socket.on('deleteFile', async ({pathToFileorFlder}) => {
+    socket.on("deleteFile", async ({pathToFileorFlder}) => {
         try {
             const res = await fs.unlink(pathToFileorFlder);
-            socket.emit('deleteFileSuccess', {
+            socket.emit("deleteFileSuccess", {
                 data : 'file deleted succesfully'
             });
         } catch (error) {
             console.log("error while deleting  the file ", error);
-            socket.emit('error', {
+            socket.emit("error", {
              data : " error while deleting the file "
             });
         }

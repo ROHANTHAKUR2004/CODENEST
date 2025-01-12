@@ -4,12 +4,20 @@ import { FaFolderOpen } from "react-icons/fa";
 import { Fileicon } from "../atoms/EditorTabsButton/FileIcon/Fileicon";
 import "./TreeNode.css"; 
 import { useEditorSocketStore } from "../../store/EditorSocket";
+import { useFileContextMenuStore } from "../../store/fileContextMenuStore";
 
 export const TreeNode = ({ filefolderData }) => {
 
   const [visibility, setVisibility] = useState({});
 
   const { editorsocket} = useEditorSocketStore();
+      
+  const {
+   setFile,
+   setIsopen : setfileContextMenuisopen ,
+   setX : setfileContextX,
+   setY : setfileContextY
+    }  = useFileContextMenuStore();
  
   const toggleVisibility = (name) => {
     setVisibility((prev) => ({
@@ -28,6 +36,16 @@ export const TreeNode = ({ filefolderData }) => {
       pathToFileorFlder : filefolderData.path
      })
   }
+
+  function handleContextMenuForFiles(e, path){
+       e.preventDefault();
+       console.log("right clicked", path);
+       setFile(path);
+       setfileContextX(e.clientX);
+       setfileContextY(e.clientY);
+       setfileContextMenuisopen(true);
+  }
+
 
   return (
     filefolderData && (
@@ -49,6 +67,7 @@ export const TreeNode = ({ filefolderData }) => {
           </button>
         ) : (
           <div className="tree-node-file"
+            onContextMenu={(e) => handleContextMenuForFiles(e,filefolderData.path)}
             onDoubleClick={() => handledoubleclick(filefolderData)}>
             <Fileicon extension={computeExtension(filefolderData)} />
             <span 
