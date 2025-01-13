@@ -78,18 +78,17 @@ export const handleEditorSocketEvents = (socket, editorNamespace) => {
     })
 
     // Rename file or folder
-    socket.on('rename', async ({ oldPath, newPath }) => {
-        try {
-          // Renaming file or folder
+    socket.on("rename", async ({ oldPath, newPath }) => {
+       try {
           await fs.rename(oldPath, newPath);
-          socket.emit('renameSuccess', {
+          socket.emit("renameSuccess", {
             message: `Successfully renamed from ${oldPath} to ${newPath}`,
           });
         } catch (error) {
           console.log("Error renaming the file/folder:", error);
           socket.emit('error', {
             message: "Error renaming the file/folder",
-            error: error.message, // Include error details
+            error: error.message, 
           });
         }
       });

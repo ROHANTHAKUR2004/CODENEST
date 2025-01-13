@@ -1,72 +1,82 @@
 import { useState, useRef, useEffect } from "react";
+import { useFolderContextMenuStore } from "../../../store/folderContextMenu";
 import { useEditorSocketStore } from "../../../store/EditorSocket";
-import { useFileContextMenuStore } from "../../../store/fileContextMenuStore";
 
-export const FileContextMenu = ({ x, y, path }) => {
-  const { setIsopen } = useFileContextMenuStore();
+export const FolderContextMenu = ({ x, y, path }) => {
+  const { setIsOpen } = useFolderContextMenuStore();
   const { editorsocket } = useEditorSocketStore();
 
   const [isRenaming, setIsRenaming] = useState(false);
-  const [newFileName, setNewFileName] = useState("");
+  const [newFolderName, setNewFolderName] = useState("");
   const inputRef = useRef(null);
 
-  const pathParts = path.split("\\"); 
-  const currentFileName = pathParts[pathParts.length - 1]; 
+  const pathParts = path.split("\\");
+  const currentFolderName = pathParts[pathParts.length - 1];
 
   useEffect(() => {
     if (isRenaming && inputRef.current) {
-      inputRef.current.focus(); 
+      inputRef.current.focus();
     }
   }, [isRenaming]);
 
-  function handleFileDelete(e) {
+  function handleFolderDelete(e) {
     e.preventDefault();
-    console.log("Deleting file:", path);
-    editorsocket.emit("deleteFile", {
-      pathToFileorFlder: path,
-    });
-    setIsopen(false);
+    console.log("Deleting folder:", path);
+    editorsocket.emit("deleteFolder", { pathToFolder: path });
+    setIsOpen(false);
   }
 
   function handleRenameClick(e) {
     e.preventDefault();
     setIsRenaming(true);
-    setNewFileName(currentFileName);
+    setNewFolderName(currentFolderName);
   }
 
   function handleRenameSubmit(e) {
     e.preventDefault();
-
- 
-    if (!newFileName.trim() || newFileName.trim() === currentFileName) {
+    if (!newFolderName.trim() || newFolderName.trim() === currentFolderName) {
       console.log("Rename cancelled or no changes made.");
       setIsRenaming(false);
       return;
     }
 
-
-    pathParts[pathParts.length - 1] = newFileName.trim();
+    pathParts[pathParts.length - 1] = newFolderName.trim();
     const newPath = pathParts.join("\\");
+    console.log("Renaming folder from:", path, "to:", newPath);
 
-    console.log("Renaming file from:", path, "to:", newPath);
-
-   
-    editorsocket.emit("rename", {
-      oldPath: path,
-      newPath: newPath,
-    });
-
+    editorsocket.emit("renameFolder", { oldPath: path, newPath: newPath });
     setIsRenaming(false);
-    setIsopen(false);
+    setIsOpen(false);
   }
 
   function handleCancelRename() {
     setIsRenaming(false);
   }
 
+  function handleCreateFile(e) {
+    e.preventDefault();
+    const fileName = prompt("Enter new file name:");
+    if (fileName) {
+      const filePath = `${path}\\${fileName}`;
+      console.log("Creating file at:", filePath);
+      editorsocket.emit("createFile", { filePath });
+    }
+    setIsOpen(false);
+  }
+
+  function handleCreateFolder(e) {
+    e.preventDefault();
+    const folderName = prompt("Enter new folder name:");
+    if (folderName) {
+      const folderPath = `${path}\\${folderName}`;
+      console.log("Creating folder at:", folderPath);
+      editorsocket.emit("createFolder", { folderPath });
+    }
+    setIsOpen(false);
+  }
+
   return (
     <>
-
       <div
         style={{
           display: "flex",
@@ -83,11 +93,11 @@ export const FileContextMenu = ({ x, y, path }) => {
             <input
               ref={inputRef}
               type="text"
-              value={newFileName}
-              onChange={(e) => setNewFileName(e.target.value)}
+              value={newFolderName}
+              onChange={(e) => setNewFolderName(e.target.value)}
               onBlur={handleCancelRename}
               onKeyDown={(e) => {
-                if (e.key === "Escape") handleCancelRename(); 
+                if (e.key === "Escape") handleCancelRename();
               }}
               style={{
                 width: "100%",
@@ -110,18 +120,18 @@ export const FileContextMenu = ({ x, y, path }) => {
               width: "100%",
               wordBreak: "break-all",
             }}
-            onDoubleClick={handleRenameClick} 
+            onDoubleClick={handleRenameClick}
           >
-            {currentFileName}
+            {currentFolderName}
           </span>
         )}
       </div>
 
       {!isRenaming && (
         <div
-          onMouseLeave={() => setIsopen(false)}
+          onMouseLeave={() => setIsOpen(false)}
           style={{
-            width: "140px",
+            width: "160px",
             position: "fixed",
             left: x,
             top: y,
@@ -136,45 +146,44 @@ export const FileContextMenu = ({ x, y, path }) => {
           }}
         >
           <button
-            style={{
-              display: "block",
-              width: "100%",
-              padding: "10px 16px",
-              textAlign: "left",
-              border: "none",
-              background: "transparent",
-              cursor: "pointer",
-              fontSize: "14px",
-              color: "#2d3748",
-              transition: "background 0.2s ease, color 0.2s ease",
-            }}
-            onClick={handleFileDelete}
-            onMouseEnter={(e) => (e.target.style.background = "#f1f5f9")}
-            onMouseLeave={(e) => (e.target.style.background = "transparent")}
+            style={menuButtonStyle}
+            onClick={handleFolderDelete}
           >
-            🗑️ Delete File
+            🗑️ Delete Folder
           </button>
           <button
-            style={{
-              display: "block",
-              width: "100%",
-              padding: "10px 16px",
-              textAlign: "left",
-              border: "none",
-              background: "transparent",
-              cursor: "pointer",
-              fontSize: "14px",
-              color: "#2d3748",
-              transition: "background 0.2s ease, color 0.2s ease",
-            }}
+            style={menuButtonStyle}
             onClick={handleRenameClick}
-            onMouseEnter={(e) => (e.target.style.background = "#f1f5f9")}
-            onMouseLeave={(e) => (e.target.style.background = "transparent")}
           >
-            ✏️ Rename File
+            ✏️ Rename Folder
+          </button>
+          <button
+            style={menuButtonStyle}
+            onClick={handleCreateFile}
+          >
+            📄 Create File
+          </button>
+          <button
+            style={menuButtonStyle}
+            onClick={handleCreateFolder}
+          >
+            📂 Create Folder
           </button>
         </div>
       )}
     </>
   );
+};
+
+const menuButtonStyle = {
+  display: "block",
+  width: "100%",
+  padding: "10px 16px",
+  textAlign: "left",
+  border: "none",
+  background: "transparent",
+  cursor: "pointer",
+  fontSize: "14px",
+  color: "#2d3748",
+  transition: "background 0.2s ease, color 0.2s ease",
 };

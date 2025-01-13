@@ -5,20 +5,27 @@ import { Fileicon } from "../atoms/EditorTabsButton/FileIcon/Fileicon";
 import "./TreeNode.css"; 
 import { useEditorSocketStore } from "../../store/EditorSocket";
 import { useFileContextMenuStore } from "../../store/fileContextMenuStore";
+import { useFolderContextMenuStore } from "../../store/folderContextMenu";
 
 export const TreeNode = ({ filefolderData }) => {
-
   const [visibility, setVisibility] = useState({});
-
-  const { editorsocket} = useEditorSocketStore();
-      
+  const { editorsocket } = useEditorSocketStore();
+  
   const {
-   setFile,
-   setIsopen : setfileContextMenuisopen ,
-   setX : setfileContextX,
-   setY : setfileContextY
-    }  = useFileContextMenuStore();
- 
+    setFile,
+    setIsopen: setFileContextMenuIsOpen,
+    setX: setFileContextX,
+    setY: setFileContextY
+  } = useFileContextMenuStore();
+
+  const {
+    setFolder,
+    setIsOpen: setFolderContextMenuIsOpen,
+    setX: setFolderContextX,
+    setY: setFolderContextY,
+  } = useFolderContextMenuStore();
+  
+
   const toggleVisibility = (name) => {
     setVisibility((prev) => ({
       ...prev,
@@ -31,22 +38,28 @@ export const TreeNode = ({ filefolderData }) => {
     return name[name.length - 1];
   };
 
-  function handledoubleclick(filefolderData){
-     editorsocket.emit("readFile", {
-      pathToFileorFlder : filefolderData.path
-     })
+  function handleDoubleClickFile(filefolderData) {
+    editorsocket.emit("readFile", {
+      pathToFileorFlder: filefolderData.path
+    });
   }
 
-  function handleContextMenuForFiles(e, path){
-       e.preventDefault();
-       console.log("right clicked", path);
-       setFile(path);
-       setfileContextX(e.clientX);
-       setfileContextY(e.clientY);
-       setfileContextMenuisopen(true);
+  function handleContextMenuForFile(e, path) {
+    e.preventDefault();
+    setFile(path);
+    setFileContextX(e.clientX);
+    setFileContextY(e.clientY);
+    setFileContextMenuIsOpen(true);
   }
 
-
+  
+  function handleContextMenuForFolder(e, path) {
+    e.preventDefault();
+    setFolder(path);
+    setFolderContextX(e.clientX);
+    setFolderContextY(e.clientY);
+    setFolderContextMenuIsOpen(true);
+  }
   return (
     filefolderData && (
       <div className="tree-node">
@@ -54,6 +67,7 @@ export const TreeNode = ({ filefolderData }) => {
           <button
             className="tree-node-folder"
             onClick={() => toggleVisibility(filefolderData.name)}
+            onContextMenu={(e) => handleContextMenuForFolder(e, filefolderData.path)}
           >
             <span className="tree-node-icon">
               {visibility[filefolderData.name] ? (
@@ -66,14 +80,13 @@ export const TreeNode = ({ filefolderData }) => {
             <span>{filefolderData.name}</span>
           </button>
         ) : (
-          <div className="tree-node-file"
-            onContextMenu={(e) => handleContextMenuForFiles(e,filefolderData.path)}
-            onDoubleClick={() => handledoubleclick(filefolderData)}>
+          <div
+            className="tree-node-file"
+            onContextMenu={(e) => handleContextMenuForFile(e, filefolderData.path)}
+            onDoubleClick={() => handleDoubleClickFile(filefolderData)}
+          >
             <Fileicon extension={computeExtension(filefolderData)} />
-            <span 
-            
-            className="file-name">{filefolderData.name}
-            </span>
+            <span className="file-name">{filefolderData.name}</span>
           </div>
         )}
         {visibility[filefolderData.name] &&

@@ -26,7 +26,13 @@ export const useEditorSocketStore = create((set) =>({
                 console.log("delet file succes");
                 projectTreeStructureSetter();
              });
+
+             incomingSocket?.on("renameSuccess", () => {
+                console.log("rename file succes");
+                projectTreeStructureSetter();
+             });
         
+            
           
           set ({
               editorsocket : incomingSocket 
