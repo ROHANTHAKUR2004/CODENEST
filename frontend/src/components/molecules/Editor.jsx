@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 
  import { useActiveFileTabStore } from "../../store/activeFiletabStore"
 import { useEditorSocketStore } from "../../store/EditorSocket"
+import { extensiontofiletype } from "../../utils/extensiontofiletype"
 
 export const EditorComponent = () =>{
 
@@ -59,7 +60,7 @@ export const EditorComponent = () =>{
             height={'80vh'}
             width={'100%'}
             defaultLanguage="code here"
-            language={undefined}
+            language={extensiontofiletype(activeFileTab?.extension)}
              options={
                 {
                     fontSize : 18,
