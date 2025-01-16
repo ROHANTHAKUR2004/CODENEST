@@ -31,9 +31,23 @@ export const useEditorSocketStore = create((set) =>({
                 console.log("rename file succes");
                 projectTreeStructureSetter();
              });
+
+             incomingSocket?.on("deleteFolderSuccess", () => {
+               console.log("deleting folder response ");
+               projectTreeStructureSetter();
+             });
+
+             incomingSocket?.on("createFolderSuccess", () => {
+               console.log("create folder response ");
+               projectTreeStructureSetter();
+             });
+
+             incomingSocket?.on("createFileSuccess", () => {
+               console.log("crete file response socket ");
+               projectTreeStructureSetter();
+             });
         
-            
-          
+      
           set ({
               editorsocket : incomingSocket 
           })

@@ -19,29 +19,36 @@ export const handleEditorSocketEvents = (socket, editorNamespace) => {
   });
 
   // Create file
-   socket.on('createFile', async ({pathToFileorFlder}) => {
-              const isFileAlreadyPresent = await fs.stat(pathToFileorFlder);
-              if(isFileAlreadyPresent){
-                   socket.emit('error', {
-                    data : 'file already exits'
-                   });
-                   return;   
-              }
-         
-            try {
-                const res = await fs.writeFile(pathToFileorFlder, '');
-                socket.emit('createFileSuccess', {
-                    data : "File Created succesfully"
-                });
-                
-            } catch (error) {
-                console.log("error creating the file ", error);
-             socket.emit('error', {
-              data : " error creating the file"
-             });
-            }    
-   })
 
+socket.on("createFile", async ({ pathToFileorFlder }) => {
+    try {
+        // Check if the file already exists
+        try {
+            await fs.access(pathToFileorFlder); // Throws if file doesn't exist
+            socket.emit('error', {
+                data: 'File already exists',
+            });
+            return;
+        } catch (accessError) {
+            if (accessError.code !== 'ENOENT') {
+                throw accessError; // Re-throw unexpected errors
+            }
+        }
+
+        // Create the file
+        await fs.writeFile(pathToFileorFlder, '');
+        console.log("File created successfully");
+        socket.emit("createFileSuccess", {
+            data: "File created successfully",
+        });
+    } catch (error) {
+        console.error("Error creating the file:", error);
+        socket.emit('error', {
+            data: "Error creating the file",
+            error: error.message,
+        });
+    }
+});
 
     // readfile
 
@@ -79,7 +86,10 @@ export const handleEditorSocketEvents = (socket, editorNamespace) => {
 
     // Rename file or folder
     socket.on("rename", async ({ oldPath, newPath }) => {
-       try {
+      console.log("renaming backend")
+      console.log("Old Path:", oldPath);
+      console.log("New Path:", newPath);
+        try {
           await fs.rename(oldPath, newPath);
           socket.emit("renameSuccess", {
             message: `Successfully renamed from ${oldPath} to ${newPath}`,
@@ -96,10 +106,11 @@ export const handleEditorSocketEvents = (socket, editorNamespace) => {
 
     // CreateFolder
 
-    socket.on('createFolder', async ({pathToFileorFlder}) => {
+    socket.on("createFolder", async ({pathToFileorFlder}) => {
+        console.log('folder creating')
         try {
             const res = await fs.mkdir(pathToFileorFlder);
-            socket.emit('createFolderSuccess', {
+            socket.emit("createFolderSuccess", {
                 data : 'folder created succesfully'
             });
         } catch (error) {
@@ -113,10 +124,12 @@ export const handleEditorSocketEvents = (socket, editorNamespace) => {
 
     // DeleteFolder
 
-    socket.on('deleteFolder', async ({pathToFileorFlder}) => {
+    socket.on("deleteFolder", async ({pathToFileorFlder}) => {
+          console.log("folder deleting")
         try {
-            const res = await  fs.rmdir(pathToFileorFlder , {recursive : true});
-            socket.emit('deleteFolderSuccess', {
+            const res = await fs.rmdir(pathToFileorFlder , {recursive : true});
+             console.log("folder deleting ", res);
+            socket.emit("deleteFolderSuccess", {
                 data : 'folder Deleted succesfully'
             });
         } catch (error) {

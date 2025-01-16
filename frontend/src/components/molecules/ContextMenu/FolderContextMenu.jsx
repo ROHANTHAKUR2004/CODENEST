@@ -7,71 +7,84 @@ export const FolderContextMenu = ({ x, y, path }) => {
   const { editorsocket } = useEditorSocketStore();
 
   const [isRenaming, setIsRenaming] = useState(false);
-  const [newFolderName, setNewFolderName] = useState("");
+  const [isCreatingFile, setIsCreatingFile] = useState(false);
+  const [isCreatingFolder, setIsCreatingFolder] = useState(false);
+  const [newName, setNewName] = useState("");
   const inputRef = useRef(null);
 
   const pathParts = path.split("\\");
   const currentFolderName = pathParts[pathParts.length - 1];
 
   useEffect(() => {
-    if (isRenaming && inputRef.current) {
+    if ((isRenaming || isCreatingFile || isCreatingFolder) && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [isRenaming]);
+  }, [isRenaming, isCreatingFile, isCreatingFolder]);
 
   function handleFolderDelete(e) {
     e.preventDefault();
     console.log("Deleting folder:", path);
-    editorsocket.emit("deleteFolder", { pathToFolder: path });
+    editorsocket.emit("deleteFolder", { pathToFileorFlder: path });
     setIsOpen(false);
   }
 
   function handleRenameClick(e) {
     e.preventDefault();
     setIsRenaming(true);
-    setNewFolderName(currentFolderName);
+    setNewName(currentFolderName);
   }
 
   function handleRenameSubmit(e) {
     e.preventDefault();
-    if (!newFolderName.trim() || newFolderName.trim() === currentFolderName) {
+    if (!newName.trim() || newName.trim() === currentFolderName) {
       console.log("Rename cancelled or no changes made.");
       setIsRenaming(false);
       return;
     }
 
-    pathParts[pathParts.length - 1] = newFolderName.trim();
+    pathParts[pathParts.length - 1] = newName.trim();
     const newPath = pathParts.join("\\");
     console.log("Renaming folder from:", path, "to:", newPath);
-
-    editorsocket.emit("renameFolder", { oldPath: path, newPath: newPath });
+    editorsocket.emit("rename", { oldPath: path, newPath: newPath });
     setIsRenaming(false);
     setIsOpen(false);
   }
 
-  function handleCancelRename() {
+  function handleCancel() {
     setIsRenaming(false);
+    setIsCreatingFile(false);
+    setIsCreatingFolder(false);
   }
 
-  function handleCreateFile(e) {
+  function handleCreateFileClick(e) {
     e.preventDefault();
-    const fileName = prompt("Enter new file name:");
-    if (fileName) {
-      const filePath = `${path}\\${fileName}`;
-      console.log("Creating file at:", filePath);
-      editorsocket.emit("createFile", { filePath });
-    }
-    setIsOpen(false);
+    setIsCreatingFile(true);
+    setNewName("");
   }
 
-  function handleCreateFolder(e) {
+  function handleCreateFolderClick(e) {
     e.preventDefault();
-    const folderName = prompt("Enter new folder name:");
-    if (folderName) {
-      const folderPath = `${path}\\${folderName}`;
-      console.log("Creating folder at:", folderPath);
-      editorsocket.emit("createFolder", { folderPath });
+    setIsCreatingFolder(true);
+    setNewName("");
+  }
+
+  function handleCreateSubmit(e) {
+    e.preventDefault();
+    if (!newName.trim()) {
+      console.log("Creation cancelled: empty name.");
+      handleCancel();
+      return;
     }
+
+    const newPath = `${path}\\${newName.trim()}`;
+    if (isCreatingFile) {
+      console.log("Creating file at:", newPath);
+      editorsocket.emit("createFile", { pathToFileorFlder: newPath });
+    } else if (isCreatingFolder) {
+      console.log("Creating folder at:", newPath);
+      editorsocket.emit("createFolder", { pathToFileorFlder: newPath });
+    }
+    handleCancel();
     setIsOpen(false);
   }
 
@@ -88,16 +101,16 @@ export const FolderContextMenu = ({ x, y, path }) => {
           position: "relative",
         }}
       >
-        {isRenaming ? (
-          <form onSubmit={handleRenameSubmit} style={{ width: "100%" }}>
+        {(isRenaming || isCreatingFile || isCreatingFolder) ? (
+          <form onSubmit={isRenaming ? handleRenameSubmit : handleCreateSubmit} style={{ width: "100%" }}>
             <input
               ref={inputRef}
               type="text"
-              value={newFolderName}
-              onChange={(e) => setNewFolderName(e.target.value)}
-              onBlur={handleCancelRename}
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              onBlur={handleCancel}
               onKeyDown={(e) => {
-                if (e.key === "Escape") handleCancelRename();
+                if (e.key === "Escape") handleCancel();
               }}
               style={{
                 width: "100%",
@@ -127,7 +140,7 @@ export const FolderContextMenu = ({ x, y, path }) => {
         )}
       </div>
 
-      {!isRenaming && (
+      {!isRenaming && !isCreatingFile && !isCreatingFolder && (
         <div
           onMouseLeave={() => setIsOpen(false)}
           style={{
@@ -159,13 +172,13 @@ export const FolderContextMenu = ({ x, y, path }) => {
           </button>
           <button
             style={menuButtonStyle}
-            onClick={handleCreateFile}
+            onClick={handleCreateFileClick}
           >
             📄 Create File
           </button>
           <button
             style={menuButtonStyle}
-            onClick={handleCreateFolder}
+            onClick={handleCreateFolderClick}
           >
             📂 Create Folder
           </button>
