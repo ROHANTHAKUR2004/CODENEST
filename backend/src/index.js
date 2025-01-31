@@ -6,6 +6,7 @@ import cors from 'cors';
 import apirouter from './routes/index.js';
 import chokidar from 'chokidar';
 import { handleEditorSocketEvents } from './SocketHnadlers/EditorHandler.js';
+import { handlecontainercreate } from './containers/handlecontainerscreate.js';
 
 const app = express();
 const server = createServer(app);
@@ -54,7 +55,22 @@ editorNamespace.on("connection", (socket) => {
             //  });
 });
 
+const terminalNamespace = io.of('/terminal');
+terminalNamespace.on("connection", (socket) =>{
+    console.log("TERMINAL CONNECTED");
+    let projectId = socket.handshake.query['projectId'];
 
+    socket.on("shell-input", (data) =>{
+        console.log("input recevived", data);
+        terminalNamespace.emit("shell-output", data);
+    })
+
+    socket.on("disconnect" , () => {
+        console.log("terminal disconnected");
+    })
+
+    handlecontainercreate(projectId,socket);
+});
 
 
 

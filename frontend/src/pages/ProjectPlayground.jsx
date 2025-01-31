@@ -7,6 +7,8 @@ import { useEffect } from "react";
 import {io} from "socket.io-client";
 import { Treestructure } from "../components/organisms/treeStructure/Treestructure";
 
+import { Terminalcompo } from "../components/molecules/Terminal/Terminalcompo";
+
 export const ProjectPlayground = () => {
   const { projectId } = useParams();
   const { seteditorSocket } = useEditorSocketStore();
@@ -42,6 +44,11 @@ export const ProjectPlayground = () => {
         <div style={styles.editor}>
           <EditorComponent />
         </div>
+
+        {/* Terminal Section */}
+        <div style={styles.terminal}>
+          <Terminalcompo />
+        </div>
       </div>
     </div>
   );
@@ -65,8 +72,8 @@ const styles = {
   },
   editorContainer: {
     flex: 1, // Take up remaining space
-    display: "flex",
-    flexDirection: "column", // Stack buttons above editor
+    display: "grid",
+    gridTemplateRows: "auto 1fr auto", // Buttons, Editor, Terminal
     backgroundColor: "#1e1e1e",
   },
   buttons: {
@@ -81,6 +88,14 @@ const styles = {
     flex: 1, // Take up the remaining space
     padding: "0px",
     color: "#d4d4d4",
+    overflowY: "auto",
+  },
+  terminal: {
+    backgroundColor: "#1e1e1e", // Terminal background color
+    color: "#d4d4d4", // Terminal text color
+    borderTop: "1px solid #444", // Separator line like VS Code
+    padding: "0px",
+    height: "100px", // Fixed height for the terminal
     overflowY: "auto",
   },
 };
