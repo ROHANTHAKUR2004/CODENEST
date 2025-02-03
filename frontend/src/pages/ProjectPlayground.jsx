@@ -8,10 +8,15 @@ import {io} from "socket.io-client";
 import { Treestructure } from "../components/organisms/treeStructure/Treestructure";
 
 import { Terminalcompo } from "../components/molecules/Terminal/Terminalcompo";
+import { useterminalsocketstore } from "../store/terminalsocketstore";
 
 export const ProjectPlayground = () => {
   const { projectId } = useParams();
   const { seteditorSocket } = useEditorSocketStore();
+
+
+  const { setterminalsocket} = useterminalsocketstore();
+
 
   useEffect(() => {
     const editorsocketconn = io(`${import.meta.env.VITE_BACKEND_URL}/editor`, {
@@ -19,8 +24,16 @@ export const ProjectPlayground = () => {
         projectId: projectId,
       },
     });
+    try {
+      const ws = new WebSocket("ws://localhost:3000/terminal?projectId="+projectId )
+      setterminalsocket(ws);
+    } catch (error) {
+       console.log(error);
+       
+       
+    }
     seteditorSocket(editorsocketconn);
-  }, [projectId, seteditorSocket]);
+  }, [projectId, seteditorSocket, setterminalsocket ]);
 
   return (
     <div style={styles.container}>
@@ -29,6 +42,7 @@ export const ProjectPlayground = () => {
         {projectId && (
           <>
             <Treestructure />
+          
           </>
         )}
       </div>
@@ -95,7 +109,7 @@ const styles = {
     color: "#d4d4d4", // Terminal text color
     borderTop: "1px solid #444", // Separator line like VS Code
     padding: "0px",
-    height: "100px", // Fixed height for the terminal
+    height: "150px", // Fixed height for the terminal
     overflowY: "auto",
   },
 };

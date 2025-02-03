@@ -8,6 +8,11 @@ import chokidar from 'chokidar';
 import { handleEditorSocketEvents } from './SocketHnadlers/EditorHandler.js';
 import { handlecontainercreate } from './containers/handlecontainerscreate.js';
 
+import { WebSocketServer } from 'ws';
+import { handleterminalCreation } from './containers/handleterminalCreation.js';
+
+
+
 const app = express();
 const server = createServer(app);
 const io = new Server(server , {
@@ -21,7 +26,7 @@ const io = new Server(server , {
 app.use(express.json());
 app.use(express.urlencoded());
 app.use(cors());
-
+     
 app.use('/api', apirouter);
  
 const editorNamespace = io.of('/editor');
@@ -29,7 +34,6 @@ editorNamespace.on("connection", (socket) => {
        console.log("Editor Connected");
         
         let projectId = socket.handshake.query['projectId'];
-          console.log("project id revecived from frontend", projectId);
            if(projectId){
                 var watcher = chokidar.watch(`./projects/${projectId}`, {
                     ignored : (path) => path.includes("node_modules"),
@@ -55,26 +59,38 @@ editorNamespace.on("connection", (socket) => {
             //  });
 });
 
-const terminalNamespace = io.of('/terminal');
-terminalNamespace.on("connection", (socket) =>{
-    console.log("TERMINAL CONNECTED");
-    let projectId = socket.handshake.query['projectId'];
-
-    socket.on("shell-input", (data) =>{
-        console.log("input recevived", data);
-        terminalNamespace.emit("shell-output", data);
-    })
-
-    socket.on("disconnect" , () => {
-        console.log("terminal disconnected");
-    })
-
-    handlecontainercreate(projectId,socket);
-});
-
-
-
 
 server.listen(PORT, ()=>{
     console.log(`Server runnnig on ${PORT}`);
+})
+
+
+const websocketterminal = new WebSocketServer({
+    noServer : true,
+})
+
+server.on("upgrade", (req, tcpsocket, head) =>{
+      
+    const isTerminal = req.url.includes("/terminal");
+
+    if(isTerminal){
+        console.log("req url " ,req.url);
+        const projectId = req.url.split("=")[1];
+        console.log("projectid", projectId )
+
+        handlecontainercreate(projectId, websocketterminal, req, tcpsocket, head)
+    }
+})
+
+websocketterminal.on("connection", (ws, req, container) => {
+    console.log("terminal connected");
+    handleterminalCreation(container, ws);
+    ws.on("close", () => {
+        container.remove({force : true}, (err, data) => {
+            if(err){
+                console.log("error while reomving container", err);
+            }
+            console.log("dta of container removed", data );
+        });
+    })
 })

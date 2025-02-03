@@ -2,16 +2,19 @@ import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 import "@xterm/xterm/css/xterm.css";
 import { useEffect, useRef } from "react";
-import {io} from "socket.io-client";
-import { useParams } from "react-router-dom";
-
+//import { useParams } from "react-router-dom";
+import { useterminalsocketstore } from "../../../store/terminalsocketstore";
+import { AttachAddon } from "@xterm/addon-attach";
 
 export const Terminalcompo = () => {
 
     const terminalRef = useRef(null);
 
-    const socket = useRef(null);
-    const { projectId } = useParams();
+   // const socket = useRef(null);
+   // const { projectId } = useParams();
+
+    const {terminalsocket} = useterminalsocketstore();
+
 
     useEffect(() => {
          const term = new Terminal({
@@ -37,28 +40,23 @@ export const Terminalcompo = () => {
         fitaddon.fit();   
 
 
+       // setTimeout(() => fitaddon.fit(), 100);
+       // socket.current = new WebSocket("ws://localhost:3000/terminal?projectId="+projectId )
 
-        socket.current = io(`${import.meta.env.VITE_BACKEND_URL}/terminal`, {
-          query : {
-             projectId : projectId,
-          }
-        });
+   
+       if(terminalsocket){
+        terminalsocket.onopen = () => {
+          const attachaddon  = new AttachAddon(terminalsocket);
+          term.loadAddon(attachaddon);
+       }
+       }
 
-        socket.current.on("shell-output", (data) => {
-          term.write(data);
-        })
-         
-        term.onData((data) =>{
-            console.log(" terminal dta",data);
-            socket.current.emit("shell-input" , data)
-        });
-
+       
         return () => {
             term.dispose();
-            socket.current.disconnect();
         }
 
-    }, [])
+    }, [terminalsocket])
 
     return (
         <div
@@ -69,7 +67,7 @@ export const Terminalcompo = () => {
           className='terminal'
           id="terminal-container"
         >
-
+       
         </div>
     );
   };
