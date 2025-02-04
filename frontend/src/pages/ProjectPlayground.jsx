@@ -12,7 +12,7 @@ import { useterminalsocketstore } from "../store/terminalsocketstore";
 
 export const ProjectPlayground = () => {
   const { projectId } = useParams();
-  const { seteditorSocket } = useEditorSocketStore();
+  const { seteditorSocket,  editorsocket } = useEditorSocketStore();
 
 
   const { setterminalsocket} = useterminalsocketstore();
@@ -35,9 +35,15 @@ export const ProjectPlayground = () => {
     seteditorSocket(editorsocketconn);
   }, [projectId, seteditorSocket, setterminalsocket ]);
 
+  function fetchport(){
+    editorsocket.emit("getPort");
+  }
+
+
   return (
     <div style={styles.container}>
       {/* Sidebar for TreeStructure */}
+     
       <div style={styles.sidebar}>
         {projectId && (
           <>
@@ -61,6 +67,9 @@ export const ProjectPlayground = () => {
 
         {/* Terminal Section */}
         <div style={styles.terminal}>
+        <button onClick={fetchport}>
+        get port
+      </button>
           <Terminalcompo />
         </div>
       </div>

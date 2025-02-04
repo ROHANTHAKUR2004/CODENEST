@@ -56,7 +56,7 @@ export const Terminalcompo = () => {
             term.dispose();
         }
 
-    }, [terminalsocket])
+    }, [terminalsocket]) 
 
     return (
         <div

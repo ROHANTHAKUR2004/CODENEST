@@ -6,7 +6,7 @@ import cors from 'cors';
 import apirouter from './routes/index.js';
 import chokidar from 'chokidar';
 import { handleEditorSocketEvents } from './SocketHnadlers/EditorHandler.js';
-import { handlecontainercreate } from './containers/handlecontainerscreate.js';
+import { handlecontainercreate, listcontainer } from './containers/handlecontainerscreate.js';
 
 import { WebSocketServer } from 'ws';
 import { handleterminalCreation } from './containers/handleterminalCreation.js';
@@ -50,6 +50,13 @@ editorNamespace.on("connection", (socket) => {
                 });
            }
 
+
+
+           socket.on("getPort", () => {
+            console.log("get port redevide");
+            listcontainer();
+        })
+
             handleEditorSocketEvents(socket, editorNamespace);
 
             //  socket.on("disconnect", async () => {
@@ -78,12 +85,14 @@ server.on("upgrade", (req, tcpsocket, head) =>{
         const projectId = req.url.split("=")[1];
         console.log("projectid", projectId )
 
+
         handlecontainercreate(projectId, websocketterminal, req, tcpsocket, head)
     }
 })
 
 websocketterminal.on("connection", (ws, req, container) => {
     console.log("terminal connected");
+
     handleterminalCreation(container, ws);
     ws.on("close", () => {
         container.remove({force : true}, (err, data) => {

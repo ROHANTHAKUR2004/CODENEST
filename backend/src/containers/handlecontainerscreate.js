@@ -1,6 +1,19 @@
 import Docker from 'dockerode'
 const docker = new Docker();
 
+
+export const listcontainer = async () => {
+    
+     const containers = await  docker.listContainers();
+     //console.log("containers list", containers);
+     // ports of every container
+     containers.forEach((containerinfo) =>{
+       console.log("get port of each container", containerinfo.Ports);
+     })
+
+
+}
+
 export const handlecontainercreate = async(projectId, socket, req, tcpsocket, head) =>{
 
   console.log("project id recevidfe in container create connection", projectId);
@@ -35,7 +48,6 @@ export const handlecontainercreate = async(projectId, socket, req, tcpsocket, he
         console.log("Container created", container.id);
 
         await container.start();
-
 
         console.log("container started succesfully")
 

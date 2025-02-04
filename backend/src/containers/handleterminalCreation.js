@@ -26,6 +26,13 @@ export const handleterminalCreation = (container ,ws) => {
             //step 2 stream writitng
              ws.on("message", (data) => {
                 console.log("writing data", data);
+                if(data === "getPort"){
+                   container.inspect(( err , data) => {
+                     const port = data.NetworkSettings;
+                     console.log("port is", port);
+                   })
+                   return ;
+                }
                 stream.write(data);
              })
 
