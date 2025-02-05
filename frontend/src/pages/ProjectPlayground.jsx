@@ -25,12 +25,10 @@ export const ProjectPlayground = () => {
       },
     });
     try {
-      const ws = new WebSocket("ws://localhost:3000/terminal?projectId="+projectId )
+      const ws = new WebSocket("ws://localhost:4000/terminal?projectId="+projectId )
       setterminalsocket(ws);
     } catch (error) {
-       console.log(error);
-       
-       
+       console.log(error);      
     }
     seteditorSocket(editorsocketconn);
   }, [projectId, seteditorSocket, setterminalsocket ]);
