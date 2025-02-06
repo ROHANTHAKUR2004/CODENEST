@@ -1,0 +1,89 @@
+.container {
+    display: flex;
+    height: 100vh;
+    background-color: #1e1e1e;
+  }
+  
+  .sidebar {
+    background-color: #252526;
+    min-width: 200px;
+    width: 200px; /* Fixed width for sidebar */
+    height: 100%; /* Full height */
+    overflow-y: auto;
+    padding: 10px;
+    box-sizing: border-box;
+    resize: horizontal; /* Allow horizontal resizing */
+    flex-shrink: 0; /* Prevent sidebar from shrinking */
+  }
+  
+  .mainContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .editorPane {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 0; /* Ensure this pane is stretchable */
+    overflow: hidden;
+  }
+  
+  .editorContainer {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allow this container to grow and stretch */
+    overflow: hidden; /* Prevent overflow */
+  }
+  
+  .loadBrowserButtonContainer {
+    position: absolute; /* Absolute positioning */
+    top: 10px; /* Top-right corner */
+    right: 10px; /* Right edge */
+    z-index: 10; /* Ensure it stays above other components */
+  }
+  
+  .buttons {
+    display: flex;
+    gap: 10px;
+    background-color: #333333; /* Darker background for the button bar */
+    padding: 2px 10px;
+    align-items: center;
+    border-bottom: 1px solid #444; /* Separator line like VS Code */
+  }
+  
+  .editor {
+    flex: 1; /* Take up the remaining space */
+    padding: 0px;
+    color: #d4d4d4;
+    overflow-y: auto;
+  }
+  
+  .terminal {
+    background-color: #1e1e1e; /* Terminal background color */
+    color: #d4d4d4; /* Terminal text color */
+    border-top: 1px solid #444; /* Separator line like VS Code */
+    height: 200px; /* Increased height for better terminal space */
+    overflow-y: auto;
+    resize: vertical; /* Allow terminal resizing vertically */
+    flex-shrink: 0; /* Prevent shrinking of terminal */
+  }
+  
+  .browserPane {
+    flex-grow: 1; /* Make sure the browser pane grows */
+    min-width: 300px; /* Minimum width for browser */
+    flex: 1; /* Allow browser to take remaining space */
+  }
+  
+  .browserContainer {
+    background-color: #1e1e1e;
+    min-width: 300px; /* Minimum width for browser */
+    flex: 1; /* Make sure browser content takes all available space */
+    overflow-y: auto;
+    resize: horizontal; /* Allow horizontal resizing for the browser */
+    border-left: 1px solid #444;
+    height: 100%;
+  }
+  

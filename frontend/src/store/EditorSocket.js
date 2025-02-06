@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { useActiveFileTabStore } from "./activeFiletabStore";
 import { usetreeStore } from "./treeStructureStore";
+import { useportstore } from "./portstore";
 //import { usetreeStore } from "./treeStructureStore";
 
 export const useEditorSocketStore = create((set) =>({
@@ -10,6 +11,7 @@ export const useEditorSocketStore = create((set) =>({
 
         const activefileTabSetter = useActiveFileTabStore.getState().setactiveFiletab;
         const projectTreeStructureSetter = usetreeStore.getState().settreeStructure;
+         const portsetter = useportstore.getState(). setport;
 
         incomingSocket?.on("readFileSuccess", (data) => {
              const fileextension = data.path.split('.').pop();
@@ -47,6 +49,11 @@ export const useEditorSocketStore = create((set) =>({
                console.log("crete file response socket ");
                projectTreeStructureSetter();
              });
+
+             incomingSocket?.on("getportsucess" , ({port}) => {
+                 console.log("port is", port);
+                 portsetter(port);
+             })
         
       
           set ({

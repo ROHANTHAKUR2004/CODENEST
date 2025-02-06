@@ -9,10 +9,6 @@ import { AttachAddon } from "@xterm/addon-attach";
 export const Terminalcompo = () => {
 
     const terminalRef = useRef(null);
-
-   // const socket = useRef(null);
-   // const { projectId } = useParams();
-
     const {terminalsocket} = useterminalsocketstore();
 
 
@@ -39,10 +35,6 @@ export const Terminalcompo = () => {
         term.loadAddon(fitaddon);
         fitaddon.fit();   
 
-
-       // setTimeout(() => fitaddon.fit(), 100);
-       // socket.current = new WebSocket("ws://localhost:3000/terminal?projectId="+projectId )
-
    
        if(terminalsocket){
         terminalsocket.onopen = () => {
@@ -54,6 +46,7 @@ export const Terminalcompo = () => {
        
         return () => {
             term.dispose();
+            terminalsocket?.close();
         }
 
     }, [terminalsocket]) 
@@ -61,9 +54,10 @@ export const Terminalcompo = () => {
     return (
         <div
          ref={terminalRef} 
-         style={{
-          width : '100%',
-         }}
+          style={{
+            width: "99%", // Ensure terminal uses 80% width
+            maxWidth: "100%",
+          }}
           className='terminal'
           id="terminal-container"
         >
