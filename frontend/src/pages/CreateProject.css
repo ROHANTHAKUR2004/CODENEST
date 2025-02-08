@@ -1,115 +1,182 @@
-
+/* Main container to center everything */
 .container {
-    position: fixed; 
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    justify-content: center; 
-    align-items: center;
-    font-family: "Poppins", sans-serif;
-    color: #fff;
-    overflow: hidden; 
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* Align to the top */
+  font-family: "Poppins", sans-serif;
+  color: #fff;
+  overflow: hidden;
+  padding: 20px;
+}
 
-  .gradient-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(45deg, #6a11cb, #2575fc, #ff6a00, #ee0979);
-    background-size: 300% 300%;
-    animation: gradientAnimation 8s ease infinite;
-    z-index: 1;
+/* Gradient background */
+.gradient-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, #6a11cb, #2575fc, #ff6a00, #ee0979);
+  background-size: 300% 300%;
+  animation: gradientAnimation 8s ease infinite;
+  z-index: 1;
+}
+
+/* Wrapper to hold the left and right sections */
+.wrapper {
+  display: flex;
+  gap: 30px; /* Space between sections */
+  align-items: flex-start;
+  z-index: 2;
+  max-width: 1200px;
+  width: 100%;
+  justify-content: center;
+  margin-top: 5%;
+}
+
+/* Left section (Create Project Card) */
+.card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 2rem 2.5rem;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25);
+  width: 350px;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.card-description {
+  font-size: 1rem;
+  color: #e0e0e0;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+.btn {
+  background: linear-gradient(90deg, #6a11cb, #2575fc);
+  border: none;
+  color: #fff;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 15px rgba(101, 80, 242, 0.6);
+}
+
+.btn:active {
+  transform: translateY(2px);
+}
+
+.btn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+.status {
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+.status.pending {
+  color: #ffcc00;
+}
+
+.status.success {
+  color: #00c851;
+}
+
+/* Right Section for Project List */
+.project-list {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25);
+  max-width: 600px;
+  width: 100%;
+  height: 430px; /* Set height to match card */
+  overflow-y: auto; /* Scroll if list is too long */
+}
+
+.project-list h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.project-item {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+  color: #e0e0e0;
+  transition: background 0.3s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.project-item:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-3px);
+}
+
+.project-item:active {
+  transform: translateY(1px);
+}
+
+.no-projects-message {
+  color: #e0e0e0;
+  text-align: center;
+  margin-top: 1rem;
+  font-size: 1rem;
+}
+
+/* Animation for Background Gradient */
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
   }
-  
-  
-  .card {
-    position: relative;
-    z-index: 2;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    padding: 2rem 2.5rem;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.25);
-    width: 350px;
-    margin-top: 5%; 
-    height: auto; 
-    max-height: 90%;
-    display: flex;
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .wrapper {
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  
-  .card-title {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-    color: #fff;
-  }
-  
-  .card-description {
-    font-size: 1rem;
-    color: #e0e0e0;
-    margin-bottom: 1.5rem;
-    line-height: 1.5;
+    gap: 20px;
   }
 
-  .btn {
-    background: linear-gradient(90deg, #6a11cb, #2575fc);
-    border: none;
-    color: #fff;
-    padding: 0.8rem 1.5rem;
-    font-size: 1rem;
-    font-weight: bold;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  .card, .project-list {
+    max-width: 100%;
   }
-  
-  .btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 15px rgba(101, 80, 242, 0.6);
-  }
-  
-  .btn:active {
-    transform: translateY(2px);
-  }
-  
-  .btn:disabled {
-    background: #aaa;
-    cursor: not-allowed;
-  }
-  
-  /* Status messages */
-  .status {
-    margin-top: 1rem;
-    font-weight: bold;
-  }
-  
-  .status.pending {
-    color: #ffcc00;
-  }
-  
-  .status.success {
-    color: #00c851;
-  }
-  
-  @keyframes gradientAnimation {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-  
+}

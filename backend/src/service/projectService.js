@@ -22,3 +22,29 @@ export const getprojectDirectoryService = async (projectId) => {
      const tree = directoryTree(Projectpath);
      return tree;
 }
+
+
+export const getAllProjectsService = async () => {
+    const projectsFolder = path.resolve("./projects");
+    try {
+      const files = await fs.readdir(projectsFolder);
+      const directories = [];
+  
+      for (const file of files) {
+        const fullPath = path.join(projectsFolder, file);
+        try {
+          const stat = await fs.stat(fullPath);
+          if (stat.isDirectory()) {
+            directories.push(file);
+          }
+        } catch (error) {
+          console.error(`Error getting stats for file ${file}:`, error);
+        }
+      }
+  
+      return directories;
+    } catch (error) {
+      console.error("Error reading projects directory:", error);
+      throw new Error("Unable to retrieve projects.");
+    }
+  };

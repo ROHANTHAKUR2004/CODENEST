@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom"
-import Createproject from "../pages/CreateProject"
+import {Createproject} from "../pages/CreateProject"
 import { ProjectPlayground } from "../pages/ProjectPlayground"
 
 
